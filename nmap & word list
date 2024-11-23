@@ -1,0 +1,262 @@
+Nmap
+ Exporting an IP address environment variable
+kali@kali:~$ sudo nmap -p80 $IP
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-06-21 12:33 EDT
+Nmap scan report for offsecwp (172.16.80.1)
+Host is up (0.0010s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE
+80/tcp   open  http
+
+Listing 5 - Our first Nmap scan
+kali@kali:~$ sudo nmap -p80 -sV $IP  
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-06-07 13:23 EDT
+Nmap scan report for offsecwp (192.168.1.144)
+Host is up (0.00044s latency).
+
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.38 ((Debian))
+
+Listing 6 - Nmap scan including service version
+
+kali@kali:~$ cd /usr/share/nmap/scripts
+                                                  
+kali@kali:/usr/share/nmap/scripts$ ls -lsaht |grep -i 'http'
+4.0K -rw-r--r-- 1 root root 2.2K Oct 12  2020 http-adobe-coldfusion-apsa1301.nse
+8.0K -rw-r--r-- 1 root root 5.1K Oct 12  2020 http-affiliate-id.nse
+4.0K -rw-r--r-- 1 root root 2.0K Oct 12  2020 http-apache-negotiation.nse
+8.0K -rw-r--r-- 1 root root 4.4K Oct 12  2020 http-apache-server-status.nse
+4.0K -rw-r--r-- 1 root root 1.8K Oct 12  2020 http-aspnet-debug.nse
+4.0K -rw-r--r-- 1 root root 3.9K Oct 12  2020 http-auth-finder.nse
+4.0K -rw-r--r-- 1 root root 3.2K Oct 12  2020 http-auth.nse
+4.0K -rw-r--r-- 1 root root 2.8K Oct 12  2020 http-avaya-ipoffice-users.nse
+8.0K -rw-r--r-- 1 root root 4.3K Oct 12  2020 http-awstatstotals-exec.nse
+8.0K -rw-r--r-- 1 root root 6.8K Oct 12  2020 http-axis2-dir-traversal.nse
+8.0K -rw-r--r-- 1 root root 5.4K Oct 12  2020 http-backup-finder.nse
+8.0K -rw-r--r-- 1 root root 6.3K Oct 12  2020 http-barracuda-dir-traversal.nse
+4.0K -rw-r--r-- 1 root root 2.0K Oct 12  2020 http-bigip-cookie.nse
+8.0K -rw-r--r-- 1 root root 4.9K Oct 12  2020 http-brute.nse
+8.0K -rw-r--r-- 1 root root 4.4K Oct 12  2020 http-cakephp-version.nse
+8.0K -rw-r--r-- 1 root root 4.9K Oct 12  2020 http-chrono.nse
+4.0K -rw-r--r-- 1 root root 1.7K Oct 12  2020 http-cisco-anyconnect.nse
+8.0K -rw-r--r-- 1 root root 5.4K Oct 12  2020 http-coldfusion-subzero.nse
+8.0K -rw-r--r-- 1 root root 4.1K Oct 12  2020 http-comments-displayer.nse
+8.0K -rw-r--r-- 1 root root 7.1K Oct 12  2020 http-config-backup.nse
+...
+
+Listing 7 - List of HTTP Nmap NSE Scripts
+
+kali@kali:~$ nmap -p80 --script=http-enum 172.16.80.1
+Starting Nmap 7.91 ( https://nmap.org )
+Nmap scan report for offsecwp (172.16.80.1)
+Host is up (0.00065s latency).
+
+PORT   STATE SERVICE REASON
+80/tcp open  http    syn-ack ttl 64
+| http-enum: 
+|   /wp-login.php: Possible admin folder
+|   /readme.html: Wordpress version: 2 
+|   /: WordPress version: 5.8
+|   /wp-includes/images/rss.png: Wordpress version 2.2 found.
+|   /wp-includes/js/jquery/suggest.js: Wordpress version 2.5 found.
+|   /wp-includes/images/blank.gif: Wordpress version 2.6 found.
+|   /wp-includes/js/comment-reply.js: Wordpress version 2.7 found.
+|   /wp-login.php: Wordpress login page.
+|   /wp-admin/upgrade.php: Wordpress login page.
+|_  /readme.html: Interesting, a readme.
+...
+
+Listing 8 - Running the http-enum NSE Script on offsecwp
+
+
+kali@kali:~$ nmap -p80 --script=http-methods --script-args http-methods.url-path='/wp-includes/' $IP
+Starting Nmap 7.91 ( https://nmap.org )
+Nmap scan report for offsecwp (172.16.80.1)
+Host is up (0.00052s latency).
+
+PORT   STATE SERVICE
+80/tcp open  http
+| http-methods: 
+|   Supported Methods: GET POST OPTIONS HEAD
+|_  Path tested: /wp-includes/
+
+Listing 9 - Using the http-methods NSE script on the /wp-includes/ URI
+
+
+kali@kali:~$ nmap -p80 -sV --script http-wordpress-enum offsecwp
+Starting Nmap 7.91 ( https://nmap.org ) 
+Nmap scan report for offsecwp (192.168.1.144)
+Host is up (0.00061s latency).
+
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.38 ((Debian))
+|_http-server-header: Apache/2.4.38 (Debian)
+| http-wordpress-enum: 
+| Search limited to top 100 themes/plugins
+|   plugins
+|_    akismet
+...
+
+Listing 10 - Using the http-wordpress-enum Nmap NSE Script
+
+
+--script=http-methods,http-ls,http-robots.txt,http-cookie-flags,http-cors
+
+Wordlists
+
+kali@kali:~$ sudo apt-get install -y seclists
+[sudo] password for kali: 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  seclists
+...
+
+kali@kali:~$ cd /usr/share/seclists/
+
+kali@kali:/usr/share/seclists$ ls -lsa
+total 56
+ 4 drwxr-xr-x  11 root root  4096 Oct  9 22:01 .
+12 drwxr-xr-x 321 root root 12288 Oct  9 22:01 ..
+ 4 drwxr-xr-x   9 root root  4096 Oct  9 22:01 Discovery
+ 4 drwxr-xr-x   8 root root  4096 Oct  9 22:01 Fuzzing
+ 4 drwxr-xr-x   2 root root  4096 Oct  9 22:01 IOCs
+ 4 drwxr-xr-x   5 root root  4096 Oct  9 22:01 Miscellaneous
+ 4 drwxr-xr-x  12 root root  4096 Oct  9 22:01 Passwords
+ 4 drwxr-xr-x   3 root root  4096 Oct  9 22:01 Pattern-Matching
+ 4 drwxr-xr-x   9 root root  4096 Oct  9 22:01 Payloads
+ 4 -rw-r--r--   1 root root  2010 Aug 27 17:31 README.md
+ 4 drwxr-xr-x   4 root root  4096 Oct  9 22:01 Usernames
+ 4 drwxr-xr-x  10 root root  4096 Oct  9 22:01 Web-Shells
+
+Listing 12 - Installing Seclists
+
+
+kali@kali:~$ cd /usr/share/seclists/
+                                                 
+kali@kali:/usr/share/seclists/$ ls -lsaht
+total 96K
+4.0K drwxr-xr-x  8 root root 4.0K Jun  7 11:24 .git
+4.0K drwxr-xr-x 12 root root 4.0K Jun  7 11:24 .
+4.0K drwxr-xr-x 10 root root 4.0K Jun  7 11:24 Web-Shells
+4.0K drwxr-xr-x  4 root root 4.0K Jun  7 11:24 Usernames
+4.0K drwxr-xr-x  9 root root 4.0K Jun  7 11:24 Payloads
+4.0K -rw-r--r--  1 root root 2.0K Jun  7 11:24 README.md
+4.0K drwxr-xr-x  3 root root 4.0K Jun  7 11:24 Pattern-Matching
+4.0K drwxr-xr-x 12 root root 4.0K Jun  7 11:24 Passwords
+4.0K drwxr-xr-x  5 root root 4.0K Jun  7 11:24 Miscellaneous
+4.0K drwxr-xr-x  8 root root 4.0K Jun  7 11:24 Fuzzing
+4.0K drwxr-xr-x  2 root root 4.0K Jun  7 11:24 IOCs
+4.0K -rw-r--r--  1 root root 1.1K Jun  7 11:24 LICENSE
+4.0K drwxr-xr-x  9 root root 4.0K Jun  7 11:24 Discovery
+4.0K -rw-r--r--  1 root root  522 Jun  7 11:24 CONTRIBUTING.md
+ 28K -rw-r--r--  1 root root  27K Jun  7 11:24 CONTRIBUTORS.md
+4.0K -rw-r--r--  1 root root   47 Jun  7 11:24 .gitattributes
+4.0K -rw-r--r--  1 root root   35 Jun  7 11:24 .gitignore
+4.0K drwxr-xr-x  3 root root 4.0K Jun  7 11:23 ..
+
+Listing 13 - SecLists
+
+
+kali@kali:~$ which cewl
+/usr/bin/cewl
+                                                             
+kali@kali:~$ cewl --help
+CeWL 5.4.8 (Inclusion) Robin Wood (robin@digi.ninja) (https://digi.ninja/)
+Usage: cewl [OPTIONS] ... <url>
+
+    OPTIONS:
+        -h, --help: Show help.
+        -k, --keep: Keep the downloaded file.
+        -d <x>,--depth <x>: Depth to spider to, default 2.
+        -m, --min_word_length: Minimum word length, default 3.
+        -o, --offsite: Let the spider visit other sites.
+        --exclude: A file containing a list of paths to exclude
+        --allowed: A regex pattern that path must match to be followed
+        -w, --write: Write the output to the file.
+        -u, --ua <agent>: User agent to send.
+        -n, --no-words: Don't output the wordlist.
+        --lowercase: Lowercase all parsed words
+        --with-numbers: Accept words with numbers in as well as just letters
+        --convert-umlauts: Convert common ISO-8859-1 (Latin-1) umlauts (ä-ae, ö-oe, ü-ue, ß-ss)
+        -a, --meta: include meta data.
+        --meta_file file: Output file for meta data.
+        -e, --email: Include email addresses.
+        --email_file <file>: Output file for email addresses.
+        --meta-temp-dir <dir>: The temporary directory used by exiftool when parsing files, default /tmp.
+        -c, --count: Show the count for each word found.
+        -v, --verbose: Verbose.
+        --debug: Extra debug information.
+
+        Authentication
+        --auth_type: Digest or basic.
+        --auth_user: Authentication username.
+        --auth_pass: Authentication password.
+        Proxy Support
+        --proxy_host: Proxy host.
+        --proxy_port: Proxy port, default 8080.
+        --proxy_username: Username for proxy, if required.
+        --proxy_password: Password for proxy, if required.
+
+        Headers
+        --header, -H: In format name:value - can pass multiple.
+    <url>: The site to spider.
+
+Listing 14 - Cewl help page
+
+
+kali@kali:~$ sudo cewl -d 2 -m 5 -w ourWordlist.txt www.MegaCorpOne.com
+CeWL 5.4.8 (Inclusion) Robin Wood (robin@digi.ninja) (https://digi.ninja/)
+
+kali@kali:~$ ls -lsa ourWordlist.txt
+4 -rw-r--r-- 1 root root 2788 Oct  9 23:24 ourWordlist.txt
+
+
+Listing 15 - Example usage of cewl
+
+
+kali@kali:~$ cat ourWordlist.txt
+MegaCorp
+megacorpone
+technology
+Email
+Contact
+Bootstrap
+SUPPORT
+CAREERS
+nanotechnology
+company
+About
+CONTACT
+Sheer
+ABOUT
+Security
+Rachel
+United
+States
+Custom
+styles
+template
+debugging
+purposes
+actually
+Fixed
+navbar
+Toggle
+navigation
+collapse
+future
+bleeding
+technologies
+available
+being
+working
+Systems
+Based
+behind
+FOOTER
+rights
+reserved
+...
+
