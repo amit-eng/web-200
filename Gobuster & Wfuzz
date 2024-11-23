@@ -6,7 +6,7 @@ The following NEW packages will be installed:
   gobuster
 ...
 
-
+=================================================
 Listing 20 - Examining the Help Message for Gobuster
 
 kali@kali:~$ export URL="http://offsecwp:80/"
@@ -14,6 +14,7 @@ kali@kali:~$ export URL="http://offsecwp:80/"
 kali@kali:~$ echo $URL
 http://offsecwp:80/
 
+=================================================
 Listing 21 - Setting our Environment Variable
 kali@kali:~$ gobuster dir -u $URL -w /usr/share/wordlists/dirb/common.txt -t 5 -b 301
 ===============================================================
@@ -37,8 +38,8 @@ by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
 /xmlrpc.php           (Status: 405) [Size: 42] 
 ...
 
+=================================================
 Listing 22 - Busting Example with GoBuster
-
 
 kali@kali:~$ gobuster dns -d megacorpone.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 30
 
@@ -84,8 +85,9 @@ Options:
         --field <expr>            : Do not show the payload but only the specified language expression. Repeat for various fields.
 . . .
 
+Wfuzz
+=================================================
 Listing 24 - The options available in Wfuzz
-
 
 kali@kali:~$ export URL="http://offsecwp:80/FUZZ"
                                                                                      
@@ -125,7 +127,7 @@ Processed Requests: 17128
 Filtered Requests: 17113
 Requests/sec.: 0
 
-
+=================================================
 Listing 26 - Fuzzing Files on our URL
 
 
@@ -150,9 +152,8 @@ Processed Requests: 29990
 Filtered Requests: 29987
 Requests/sec.: 0
 
-
+=================================================
 Listing 27 - Directory Discovery with Wfuzz
-
 
 kali@kali:~$ export URL="http://offsecwp:80/index.php?FUZZ=data"
 
@@ -175,8 +176,8 @@ Processed Requests: 2588
 Filtered Requests: 2585
 Requests/sec.: 0
 
+=================================================
 Listing 28 - Discovering Hidden Parameters
-
 
 kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Usernames/cirt-default-usernames.txt --hc 404 http://offsecwp:80/index.php?fpv=FUZZ
 
@@ -200,6 +201,7 @@ ID           Response   Lines    Word       Chars       Payload
 000000007:   301        0 L      0 W        0 Ch        "(created)"
 ...
 
+=================================================
 Listing 29 - Identifying the Erroneous Response Size.
 
 
@@ -222,6 +224,7 @@ Processed Requests: 828
 Filtered Requests: 827
 Requests/sec.: 0
 
+=================================================
 Listing 30 - Clean Output with No Erroneus Responses and a Successful Result.
 
 
@@ -253,6 +256,7 @@ ID           Response   Lines    Word       Chars       Payload
 000000008:   200        105 L    478 W      7201 Ch     "111111" 
 ...
 
+=================================================
 Listing 31 - Fuzzing POST Data & Brute Forcing a Login Page PT1
 
 
