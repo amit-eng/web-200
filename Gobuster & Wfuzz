@@ -1,0 +1,274 @@
+kali@kali:~$ sudo apt install -y gobuster
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  gobuster
+...
+
+
+Listing 20 - Examining the Help Message for Gobuster
+
+kali@kali:~$ export URL="http://offsecwp:80/"
+
+kali@kali:~$ echo $URL
+http://offsecwp:80/
+
+Listing 21 - Setting our Environment Variable
+kali@kali:~$ gobuster dir -u $URL -w /usr/share/wordlists/dirb/common.txt -t 5 -b 301
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://offsecwp:80/
+[+] Method:                  GET
+[+] Threads:                 5
+[+] Wordlist:                /usr/share/wordlists/dirb/common.txt
+[+] Negative Status codes:   301
+[+] User Agent:              gobuster/3.1.0
+[+] Timeout:                 10s
+===============================================================
+2021/09/07 17:19:44 Starting gobuster in directory enumeration mode
+===============================================================
+/.hta                 (Status: 403) [Size: 273]
+/.htaccess            (Status: 403) [Size: 273]
+/.htpasswd            (Status: 403) [Size: 273]
+/server-status        (Status: 403) [Size: 273]
+/xmlrpc.php           (Status: 405) [Size: 42] 
+...
+
+Listing 22 - Busting Example with GoBuster
+
+
+kali@kali:~$ gobuster dns -d megacorpone.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 30
+
+
+=============================================================================
+kali@kali:~$ wfuzz --help
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+*                                                      *
+* Version up to 1.4c coded by:                         *
+* Christian Martorella (cmartorella@edge-security.com) *
+* Carlos del ojo (deepbit@gmail.com)                   *
+*                                                      *
+* Version 1.4d to 3.1.0 coded by:                      *
+* Xavier Mendez (xmendez@edge-security.com)            *
+********************************************************
+
+Usage:  Wfuzz [options] -z payload,params <url>
+
+        FUZZ, ..., FUZnZ  wherever you put these keywords Wfuzz will replace them with the values of the specified payload.
+        FUZZ{baseline_value} FUZZ will be replaced by baseline_value. It will be the first request performed and could be used as a base for filtering.
+
+
+Options:
+        -h/--help                 : This help
+        --help                    : Advanced help
+        --filter-help             : Filter language specification
+        --version                 : Wfuzz version details
+        -e <type>                 : List of available encoders/payloads/iterators/printers/scripts
+
+        --recipe <filename>       : Reads options from a recipe. Repeat for various recipes.
+        --dump-recipe <filename>  : Prints current options as a recipe
+        --oF <filename>           : Saves fuzz results to a file. These can be consumed later using the Wfuzz payload.
+
+        -c                        : Output with colors
+        -v                        : Verbose information.
+        -f filename,printer       : Store results in the output file using the specified printer (raw printer if omitted).
+        -o printer                : Show results using the specified printer.
+        --interact                : (beta) If selected,all key presses are captured. This allows you to interact with the program.
+        --dry-run                 : Print the results of applying the requests without actually making any HTTP request.
+        --prev                    : Print the previous HTTP requests (only when using payloads generating fuzzresults)
+        --efield <expr>           : Show the specified language expression together with the current payload. Repeat for various fields.
+        --field <expr>            : Do not show the payload but only the specified language expression. Repeat for various fields.
+. . .
+
+Listing 24 - The options available in Wfuzz
+
+
+kali@kali:~$ export URL="http://offsecwp:80/FUZZ"
+                                                                                     
+kali@kali:~$ echo $URL                        
+http://offsecwp:80/FUZZ
+
+Listing 25 - Configuring our Environment Variables for Wfuzz
+
+kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt --hc 301,404,403 "$URL"
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://offsecwp/FUZZ
+Total requests: 17128
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload
+=====================================================================
+000000028:   200        100 L    450 W      6798 Ch     "wp-login.php"
+000000001:   301        0 L      0 W        0 Ch        "index.php"         
+000000005:   405        0 L      6 W        42 Ch       "xmlrpc.php"        
+000000122:   200        97 L     823 W      7345 Ch     "readme.html"        
+000000198:   200        384 L    3177 W     19915 Ch    "license.txt"      
+000000255:   200        0 L      0 W        0 Ch        "wp-config.php"   
+000000289:   200        4 L      15 W       135 Ch      "wp-trackback.php"    
+000000369:   500        0 L      0 W        0 Ch        "wp-settings.php"
+000000371:   301        0 L      0 W        0 Ch        "."        
+000000405:   200        0 L      0 W        0 Ch        "wp-cron.php" 
+000000440:   200        0 L      0 W        0 Ch        "wp-blog-header.php"  
+000000454:   200        11 L     23 W       221 Ch      "wp-links-opml.php"
+000000830:   200        0 L      0 W        0 Ch        "wp-load.php"      
+000001065:   302        0 L      0 W        0 Ch        "wp-signup.php"
+000001499:   302        0 L      0 W        0 Ch        "wp-activate.php"                                                                                                 
+Total time: 0
+Processed Requests: 17128
+Filtered Requests: 17113
+Requests/sec.: 0
+
+
+Listing 26 - Fuzzing Files on our URL
+
+
+kali@kali:~$ export URL="http://offsecwp:80/FUZZ/"
+
+kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt --hc 404,403,301 "$URL"
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://offsecwp/FUZZ/
+Total requests: 30000
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload        
+=====================================================================
+000000013:   200        0 L      0 W        0 Ch        "wp-content"
+000000020:   302        0 L      0 W        0 Ch        "wp-admin"  
+
+Total time: 0
+Processed Requests: 29990
+Filtered Requests: 29987
+Requests/sec.: 0
+
+
+Listing 27 - Directory Discovery with Wfuzz
+
+
+kali@kali:~$ export URL="http://offsecwp:80/index.php?FUZZ=data"
+
+kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt --hc 404,301 "$URL"
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://offsecwp/index.php?FUZZ=data
+Total requests: 2588
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload       
+=====================================================================
+000000031:   200        216 L    3219 W     38443 Ch    "s"
+000000051:   200        258 L    3358 W     40363 Ch    "preview"
+000001169:   200        4 L      15 W       135 Ch      "tb"           
+Total time: 0
+Processed Requests: 2588
+Filtered Requests: 2585
+Requests/sec.: 0
+
+Listing 28 - Discovering Hidden Parameters
+
+
+kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Usernames/cirt-default-usernames.txt --hc 404 http://offsecwp:80/index.php?fpv=FUZZ
+
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://offsecwp:80/index.php?fpv=FUZZ
+Total requests: 828
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload
+=====================================================================
+
+000000015:   301        0 L      0 W        0 Ch        "22222222"
+000000035:   301        0 L      0 W        0 Ch        "APPLSYSPUB"
+000000036:   301        0 L      0 W        0 Ch        "APPS"
+000000034:   301        0 L      0 W        0 Ch        "APPLSYS"
+000000003:   301        0 L      0 W        0 Ch        "$SRV"
+000000038:   301        0 L      0 W        0 Ch        "AQ"
+000000007:   301        0 L      0 W        0 Ch        "(created)"
+...
+
+Listing 29 - Identifying the Erroneous Response Size.
+
+
+kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Usernames/cirt-default-usernames.txt --hc 404,301 http://offsecwp:80/index.php?fpv=FUZZ
+
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://offsecwp:80/index.php?fpv=FUZZ
+Total requests: 828
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                         
+=====================================================================
+000000791:   200        0 L      1 W        12 Ch       "unix"                                   
+
+Total time: 0
+Processed Requests: 828
+Filtered Requests: 827
+Requests/sec.: 0
+
+Listing 30 - Clean Output with No Erroneus Responses and a Successful Result.
+
+
+kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Passwords/xato-net-10-million-passwords-100000.txt --hc 404 -d "log=admin&pwd=FUZZ" http://offsecwp:80/wp-login.php         
+
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://offsecwp:80/wp-login.php
+Total requests: 100000
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload
+=====================================================================
+000000013:   200        105 L    478 W      7201 Ch     "abc123"
+000000012:   200        105 L    478 W      7201 Ch     "baseball"
+000000010:   200        105 L    478 W      7201 Ch     "dragon"
+000000011:   200        105 L    478 W      7201 Ch     "123123"
+000000016:   200        105 L    478 W      7201 Ch     "letmein"
+000000003:   200        105 L    478 W      7201 Ch     "12345678"
+000000014:   200        105 L    478 W      7201 Ch     "football"
+000000001:   200        105 L    478 W      7201 Ch     "123456"
+000000007:   200        105 L    478 W      7201 Ch     "1234"
+000000015:   200        105 L    478 W      7201 Ch     "monkey"
+000000009:   200        105 L    478 W      7201 Ch     "1234567"
+000000005:   200        105 L    478 W      7201 Ch     "123456789"
+000000006:   200        105 L    478 W      7201 Ch     "12345"
+000000008:   200        105 L    478 W      7201 Ch     "111111" 
+...
+
+Listing 31 - Fuzzing POST Data & Brute Forcing a Login Page PT1
+
+
+kali@kali:~$ export URL="http://offsecwp:80/wp-login.php"
+
+kali@kali:~$ wfuzz -c -z file,/usr/share/seclists/Passwords/xato-net-10-million-passwords-100000.txt --hc 404 -d "log=admin&pwd=FUZZ" --hh 7201 "$URL"
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://offsecwp/wp-login.php
+Total requests: 100000
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload       
+=====================================================================
+000000002:   302        0 L      0 W        0 Ch        "password"  
+
+
+
