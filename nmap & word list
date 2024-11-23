@@ -1,4 +1,5 @@
 Nmap
+=================================================
  Exporting an IP address environment variable
 kali@kali:~$ sudo nmap -p80 $IP
 Starting Nmap 7.91 ( https://nmap.org ) at 2021-06-21 12:33 EDT
@@ -9,6 +10,7 @@ PORT     STATE SERVICE
 80/tcp   open  http
 
 Listing 5 - Our first Nmap scan
+=================================================
 kali@kali:~$ sudo nmap -p80 -sV $IP  
 Starting Nmap 7.91 ( https://nmap.org ) at 2021-06-07 13:23 EDT
 Nmap scan report for offsecwp (192.168.1.144)
@@ -18,7 +20,7 @@ PORT   STATE SERVICE VERSION
 80/tcp open  http    Apache httpd 2.4.38 ((Debian))
 
 Listing 6 - Nmap scan including service version
-
+=================================================
 kali@kali:~$ cd /usr/share/nmap/scripts
                                                   
 kali@kali:/usr/share/nmap/scripts$ ls -lsaht |grep -i 'http'
@@ -44,6 +46,7 @@ kali@kali:/usr/share/nmap/scripts$ ls -lsaht |grep -i 'http'
 8.0K -rw-r--r-- 1 root root 7.1K Oct 12  2020 http-config-backup.nse
 ...
 
+=================================================
 Listing 7 - List of HTTP Nmap NSE Scripts
 
 kali@kali:~$ nmap -p80 --script=http-enum 172.16.80.1
@@ -66,8 +69,8 @@ PORT   STATE SERVICE REASON
 |_  /readme.html: Interesting, a readme.
 ...
 
+=================================================
 Listing 8 - Running the http-enum NSE Script on offsecwp
-
 
 kali@kali:~$ nmap -p80 --script=http-methods --script-args http-methods.url-path='/wp-includes/' $IP
 Starting Nmap 7.91 ( https://nmap.org )
@@ -80,8 +83,8 @@ PORT   STATE SERVICE
 |   Supported Methods: GET POST OPTIONS HEAD
 |_  Path tested: /wp-includes/
 
+=================================================
 Listing 9 - Using the http-methods NSE script on the /wp-includes/ URI
-
 
 kali@kali:~$ nmap -p80 -sV --script http-wordpress-enum offsecwp
 Starting Nmap 7.91 ( https://nmap.org ) 
@@ -102,7 +105,10 @@ Listing 10 - Using the http-wordpress-enum Nmap NSE Script
 
 --script=http-methods,http-ls,http-robots.txt,http-cookie-flags,http-cors
 
+
+
 Wordlists
+=================================================
 
 kali@kali:~$ sudo apt-get install -y seclists
 [sudo] password for kali: 
@@ -130,8 +136,8 @@ total 56
  4 drwxr-xr-x   4 root root  4096 Oct  9 22:01 Usernames
  4 drwxr-xr-x  10 root root  4096 Oct  9 22:01 Web-Shells
 
+=================================================
 Listing 12 - Installing Seclists
-
 
 kali@kali:~$ cd /usr/share/seclists/
                                                  
@@ -156,6 +162,7 @@ total 96K
 4.0K -rw-r--r--  1 root root   35 Jun  7 11:24 .gitignore
 4.0K drwxr-xr-x  3 root root 4.0K Jun  7 11:23 ..
 
+=================================================
 Listing 13 - SecLists
 
 
@@ -203,6 +210,7 @@ Usage: cewl [OPTIONS] ... <url>
         --header, -H: In format name:value - can pass multiple.
     <url>: The site to spider.
 
+=================================================
 Listing 14 - Cewl help page
 
 
@@ -212,9 +220,8 @@ CeWL 5.4.8 (Inclusion) Robin Wood (robin@digi.ninja) (https://digi.ninja/)
 kali@kali:~$ ls -lsa ourWordlist.txt
 4 -rw-r--r-- 1 root root 2788 Oct  9 23:24 ourWordlist.txt
 
-
+=================================================
 Listing 15 - Example usage of cewl
-
 
 kali@kali:~$ cat ourWordlist.txt
 MegaCorp
